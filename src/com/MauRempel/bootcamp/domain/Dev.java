@@ -2,6 +2,7 @@ package com.MauRempel.bootcamp.domain;
 
 import java.util.LinkedHashSet;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 
 public class Dev {
@@ -11,13 +12,22 @@ public class Dev {
     private Set<Conteudo> cursosConcluidos = new LinkedHashSet<>();
 
     public void inscreverBootcamp(Bootcamp bootcamp){
+        this.cursosInscritos.addAll(bootcamp.getConteudos());
+        bootcamp.getDevsInscritos().add(this);
 
     }
     public void progredir(){
+        Optional<Conteudo> conteudo = this.cursosInscritos.stream().findFirst();
+        if(conteudo.isPresent()){
+            this.cursosConcluidos.add(conteudo.get());
+            this.cursosInscritos.remove(conteudo.get());
+        }else{
+            System.err.println("Você não está matriculado em nenhum curso no momento.");
+        }
 
     }
-    public void totalXP(){
-
+    public double totalXP(){
+        return this.cursosConcluidos.stream().mapToDouble(Conteudo::calcularXP).sum();
     }
 
     @Override
